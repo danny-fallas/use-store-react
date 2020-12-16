@@ -1,21 +1,42 @@
-import * as React from 'react'
+import { useState, useEffect } from 'react';
 
-export const useMyHook = () => {
-  let [{
-    counter
-  }, setState] = React.useState({
-    counter: 0
-  })
+const isBrowser = (typeof window !== 'undefined');
+const refresh = (callback) => setInterval(callback, 500);
 
-  React.useEffect(() => {
-    let interval = window.setInterval(() => {
-      counter++
-      setState({counter})
-    }, 1000)
-    return () => {
-      window.clearInterval(interval)
-    }
-  }, [])
+const get = (storage, key) => {
+  const item = isBrowser && storage.getItem(key);
+  return item && JSON.parse(atob(item));
+};
 
-  return counter
-}
+const set = (storage, key, value) => isBrowser && storage.setItem(key, btoa(JSON.stringify(value || false)));
+
+const usePersistedState = (key, defaultValue = false, isNew = false) => {
+  const [state, setState] = useState(() => !isNew ? get(localStorage, key) || defaultValue : defaultValue);
+
+  useEffect(() => { set(localStorage, key, state) }, [key, state]);
+
+  useEffect(() => {
+    const interval = refresh(() => setState(get(localStorage, key)));
+    return () => clearInterval(interval);
+  }, []);
+
+  return [state, setState];
+};
+
+const useSessionState = (key, defaultValue = false, isNew = false) => {
+  const [state, setState] = useState(() => !isNew ? get(sessionStorage, key) || defaultValue : defaultValue);
+
+  useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
+
+  useEffect(() => {
+    const interval = refresh(() => setState(get(sessionStorage, key)));
+    return () => clearInterval(interval);
+  }, []);
+
+  return [state, setState];
+};
+
+export {
+  usePersistedState,
+  useSessionState
+};
