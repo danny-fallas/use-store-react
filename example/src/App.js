@@ -1,7 +1,7 @@
 import React from 'react';
 import Flex from './components/Flex';
 
-import { usePersistedState, useSessionState } from 'use-store';
+import { usePersistedState, useSessionState } from 'use-store-react';
 
 const App = () => {
   const [sessionState, setSessionState] = useSessionState('key:name:session', 'default value', true);
