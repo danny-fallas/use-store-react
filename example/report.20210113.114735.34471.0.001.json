@@ -8,10 +8,10 @@
     "dumpEventTime": "2021-01-13T11:47:35Z",
     "dumpEventTimeStamp": "1610560055731",
     "processId": 34471,
-    "cwd": "/Users/Danny/Development/use-store-react/example",
+    "cwd": "/Users/Danny/Development/@dannyman/use-store/example",
     "commandLine": [
       "node",
-      "/Users/Danny/Development/use-store-react/example/node_modules/react-scripts/scripts/start.js"
+      "/Users/Danny/Development/@dannyman/use-store/example/node_modules/react-scripts/scripts/start.js"
     ],
     "nodejsVersion": "v12.16.1",
     "wordSize": 64,
@@ -358,8 +358,8 @@
     "NODE": "/Users/Danny/.nvm/versions/node/v12.16.1/bin/node",
     "npm_config_usage": "",
     "npm_config_audit": "true",
-    "INIT_CWD": "/Users/Danny/Development/use-store-react/example/src",
-    "npm_package_homepage": "https://danny-fallas.github.io/use-store-react",
+    "INIT_CWD": "/Users/Danny/Development/@dannyman/use-store/example/src",
+    "npm_package_homepage": "https://danny-fallas.github.io/@dannyman/use-store",
     "NVM_CD_FLAGS": "-q",
     "npm_config_globalignorefile": "/Users/Danny/.nvm/versions/node/v12.16.1/etc/npmignore",
     "TERM": "xterm-256color",
@@ -418,17 +418,17 @@
     "npm_config_json": "",
     "npm_config_access": "",
     "npm_config_argv": "{\"remain\":[],\"cooked\":[\"start\"],\"original\":[\"start\"]}",
-    "PATH": "/Users/Danny/.nvm/versions/node/v12.16.1/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/Users/Danny/Development/use-store-react/example/node_modules/.bin:/Users/Danny/google-cloud-sdk/bin:/Users/Danny/.nvm/versions/node/v12.16.1/bin:/Users/Danny/.rbenv/shims:/Users/Danny/.rbenv/shims:/usr/local/opt/mysql-client/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/Danny/google-cloud-sdk/bin:/Users/Danny/.nvm/versions/node/v12.16.1/bin:/Users/Danny/.rbenv/shims:/usr/local/opt/mysql-client/bin://flutter/bin:~/platform-tools:/Users/Danny/.mongodb-tools/bin:/Users/Danny/Development/use-store-react/flutter/bin:~/platform-tools:/Users/Danny/.mongodb-tools/bin",
+    "PATH": "/Users/Danny/.nvm/versions/node/v12.16.1/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/Users/Danny/Development/@dannyman/use-store/example/node_modules/.bin:/Users/Danny/google-cloud-sdk/bin:/Users/Danny/.nvm/versions/node/v12.16.1/bin:/Users/Danny/.rbenv/shims:/Users/Danny/.rbenv/shims:/usr/local/opt/mysql-client/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/Danny/google-cloud-sdk/bin:/Users/Danny/.nvm/versions/node/v12.16.1/bin:/Users/Danny/.rbenv/shims:/usr/local/opt/mysql-client/bin://flutter/bin:~/platform-tools:/Users/Danny/.mongodb-tools/bin:/Users/Danny/Development/@dannyman/use-store/flutter/bin:~/platform-tools:/Users/Danny/.mongodb-tools/bin",
     "npm_config_allow_same_version": "",
     "npm_config_https_proxy": "",
     "npm_config_engine_strict": "",
     "npm_config_description": "true",
-    "_": "/Users/Danny/Development/use-store-react/example/node_modules/.bin/react-scripts",
+    "_": "/Users/Danny/Development/@dannyman/use-store/example/node_modules/.bin/react-scripts",
     "npm_config_userconfig": "/Users/Danny/.npmrc",
     "npm_config_init_module": "/Users/Danny/.npm-init.js",
     "npm_package_dependencies_use_store_react": "file:..",
     "npm_config_cidr": "",
-    "PWD": "/Users/Danny/Development/use-store-react/example",
+    "PWD": "/Users/Danny/Development/@dannyman/use-store/example",
     "npm_config_user": "502",
     "npm_config_node_version": "12.16.1",
     "npm_lifecycle_event": "start",
@@ -436,7 +436,7 @@
     "npm_config_ignore_prepublish": "",
     "npm_config_editor": "vi",
     "npm_config_auth_type": "legacy",
-    "npm_package_name": "use-store-react-example",
+    "npm_package_name": "@dannyman/use-store-example",
     "LANG": "en_US.UTF-8",
     "npm_config_tag": "latest",
     "npm_config_script_shell": "",
@@ -777,6 +777,6 @@
     "/System/Library/PrivateFrameworks/CommonUtilities.framework/Versions/A/CommonUtilities",
     "/System/Library/PrivateFrameworks/Bom.framework/Versions/A/Bom",
     "/usr/lib/libAudioToolboxUtility.dylib",
-    "/Users/Danny/Development/use-store-react/example/node_modules/fsevents/fsevents.node"
+    "/Users/Danny/Development/@dannyman/use-store/example/node_modules/fsevents/fsevents.node"
   ]
 }

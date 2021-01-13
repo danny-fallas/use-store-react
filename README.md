@@ -1,4 +1,4 @@
-# use-store-react
+# @dannyman/use-store
 
   
 
@@ -6,7 +6,7 @@
 
   
 
-[![NPM](https://img.shields.io/npm/v/use-store-react.svg)](https://www.npmjs.com/package/use-store-react) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@dannyman/use-store.svg)](https://www.npmjs.com/package/@dannyman/use-store) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
   
 
@@ -16,7 +16,7 @@
 
 ```bash
 
-npm install --save use-store-react
+npm install --save @dannyman/use-store
 
 ```
 
@@ -30,7 +30,7 @@ npm install --save use-store-react
 
 import React from  'react';
 
-import { usePersistedState, useSessionState } from  'use-store-react';
+import { usePersistedState, useSessionState } from  '@dannyman/use-store';
 
 const  Example  = () => {
 	const [name, setName] =  useSessionState('app:key:name', 'default value', true);

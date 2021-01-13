@@ -1,6 +1,6 @@
 {
-  "name": "use-store-react-example",
-  "homepage": "https://danny-fallas.github.io/use-store-react",
+  "name": "@dannyman/use-store-example",
+  "homepage": "https://danny-fallas.github.io/@dannyman/use-store",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
@@ -9,7 +9,7 @@
     "react": "file:../node_modules/react",
     "react-dom": "^16.9.0",
     "react-scripts": "^3.0.1",
-    "use-store-react": "file:.."
+    "@dannyman/use-store": "file:.."
   },
   "scripts": {
     "start": "react-scripts start",
