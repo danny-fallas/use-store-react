@@ -8,12 +8,13 @@ const get = (storage, key) => {
   return item && JSON.parse(atob(item));
 };
 
-const set = (storage, key, value) => isBrowser && storage.setItem(key, btoa(JSON.stringify(value || false)));
+const set = (storage, key, value) => isBrowser && storage.setItem(key, btoa(JSON.stringify(value || null)));
 
 const usePersistedState = (key, defaultValue = false, isNew = false) => {
   const [state, setState] = useState(() => !isNew ? get(localStorage, key) || defaultValue : defaultValue);
 
   useEffect(() => { set(localStorage, key, state) }, [key, state]);
+  useEffect(() => { !state && setState(null) }, [state]);
 
   useEffect(() => {
     const interval = refresh(() => setState(get(localStorage, key)));
@@ -27,11 +28,7 @@ const useSessionState = (key, defaultValue = false, isNew = false) => {
   const [state, setState] = useState(() => !isNew ? get(sessionStorage, key) || defaultValue : defaultValue);
 
   useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
-
-  useEffect(() => {
-    const interval = refresh(() => setState(get(sessionStorage, key)));
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => { !state && setState(null) }, [state]);
 
   return [state, setState];
 };
