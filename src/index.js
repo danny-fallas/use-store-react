@@ -26,7 +26,7 @@ const usePersistedState = (key, defaultValue = false, isNew = false) => {
 };
 
 const useSessionState = (key, defaultValue = false, isNew = false) => {
-  const storedValue = get(localStorage, key);
+  const storedValue = get(sessionStorage, key);
   const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
 
   useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
