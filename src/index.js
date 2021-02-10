@@ -4,14 +4,15 @@ const isBrowser = (typeof window !== 'undefined');
 const refresh = (callback) => setInterval(callback, 500);
 
 const get = (storage, key) => {
-  const item = isBrowser && storage.getItem(key);
-  return item && JSON.parse(atob(item));
+  const raw = isBrowser && storage.getItem(key);
+  return (raw && raw.length) ? JSON.parse(atob(raw)) : null;
 };
 
 const set = (storage, key, value) => isBrowser && storage.setItem(key, btoa(JSON.stringify(value || null)));
 
 const usePersistedState = (key, defaultValue = false, isNew = false) => {
-  const [state, setState] = useState(() => !isNew ? get(localStorage, key) || defaultValue : defaultValue);
+  const storedValue = get(localStorage, key);
+  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
 
   useEffect(() => { set(localStorage, key, state) }, [key, state]);
   useEffect(() => { !state && setState(null) }, [state]);
@@ -25,7 +26,8 @@ const usePersistedState = (key, defaultValue = false, isNew = false) => {
 };
 
 const useSessionState = (key, defaultValue = false, isNew = false) => {
-  const [state, setState] = useState(() => !isNew ? get(sessionStorage, key) || defaultValue : defaultValue);
+  const storedValue = get(localStorage, key);
+  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
 
   useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
   useEffect(() => { !state && setState(null) }, [state]);

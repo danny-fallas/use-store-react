@@ -1,6 +1,6 @@
 {
   "name": "@dannyman/use-store",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Custom React Hook to enable Store usage without Redux",
   "author": "danny-fallas",
   "license": "MIT",
