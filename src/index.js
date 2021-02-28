@@ -11,7 +11,7 @@ const get = (storage, key) => {
 const set = (storage, key, value) => storage.setItem(key, btoa(JSON.stringify(value || null)));
 
 const usePersistedState = (key, defaultValue = false, isNew = false) => {
-  if (!isBrowser) return;
+  if (!isBrowser) return [false, () => false];
 
   const storedValue = get(localStorage, key);
   const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
@@ -27,7 +27,7 @@ const usePersistedState = (key, defaultValue = false, isNew = false) => {
 };
 
 const useSessionState = (key, defaultValue = false, isNew = false) => {
-  if (!isBrowser) return;
+  if (!isBrowser) return [false, () => false];
 
   const storedValue = get(sessionStorage, key);
   const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
