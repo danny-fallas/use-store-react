@@ -18,7 +18,7 @@ const usePersistedState = (key, defaultValue = false, isNew = false) => {
   if (!isBrowser) return ssrStateMock;
 
   const storedValue = get(localStorage, key);
-  const state = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
+  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
 
   useEffect(() => { set(localStorage, key, state) }, [key, state]);
 
@@ -27,18 +27,18 @@ const usePersistedState = (key, defaultValue = false, isNew = false) => {
     return () => clearInterval(interval);
   }, []);
 
-  return state;
+  return [state, setState];
 };
 
 const useSessionState = (key, defaultValue = false, isNew = false) => {
   if (!isBrowser) return ssrStateMock;
 
   const storedValue = get(sessionStorage, key);
-  const state = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
+  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
 
   useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
 
-  return state;
+  return [state, setState];
 };
 
 // Exports
