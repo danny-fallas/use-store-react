@@ -1,45 +1,49 @@
 // Imports
-import { useState, useEffect } from 'react';
-
-// Constants
-const ssrStateMock = [false, () => false];
+import {
+  useState,
+  useEffect,
+  useLayoutEffect
+} from 'react';
+import {
+  ssrStateMock,
+  isBrowser,
+  refresh,
+  set,
+  get,
+  getValidOptions,
+  stateShouldUpdate
+} from './functions';
 
 // Private functions
-const isBrowser = (typeof window !== 'undefined');
-const refresh = (callback) => setInterval(callback, 500);
-const set = (storage, key, value) => storage.setItem(key, btoa(JSON.stringify(value || null)));
-const get = (storage, key) => {
-  const raw = storage.getItem(key);
-  return (raw && raw.length) ? JSON.parse(atob(raw)) : null;
+const handleState = (storage, key, options) => {
+  if (!isBrowser) return ssrStateMock;
+
+  const {
+    defaultValue, isNew, autoRefresh
+  } = getValidOptions(options);
+
+  const existentValue = get(storage, key);
+  const [state, setState] = useState(() => !isNew ? (existentValue !== null) ? existentValue : defaultValue : defaultValue);
+
+  useEffect(() => { set(storage, key, state) }, [key, state]);
+
+  useLayoutEffect(() => {
+    if (autoRefresh) {
+      const interval = refresh(() => {
+        const newState = get(storage, key);
+        if (stateShouldUpdate(state, newState)) setState(newState);
+      });
+
+      return () => clearInterval(interval);
+    }
+  }, [state]);
+
+  return [state, setState];
 };
 
 // Public functions
-const usePersistedState = (key, defaultValue = false, isNew = false) => {
-  if (!isBrowser) return ssrStateMock;
-
-  const storedValue = get(localStorage, key);
-  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
-
-  useEffect(() => { set(localStorage, key, state) }, [key, state]);
-
-  useEffect(() => {
-    const interval = refresh(() => setState(get(localStorage, key)));
-    return () => clearInterval(interval);
-  }, []);
-
-  return [state, setState];
-};
-
-const useSessionState = (key, defaultValue = false, isNew = false) => {
-  if (!isBrowser) return ssrStateMock;
-
-  const storedValue = get(sessionStorage, key);
-  const [state, setState] = useState(() => !isNew ? (storedValue !== null) ? storedValue : defaultValue : defaultValue);
-
-  useEffect(() => { set(sessionStorage, key, state) }, [key, state]);
-
-  return [state, setState];
-};
+const usePersistedState = (key, options) => handleState(localStorage, key, options);
+const useSessionState = (key, options) => handleState(sessionStorage, key, options);
 
 // Exports
 export {

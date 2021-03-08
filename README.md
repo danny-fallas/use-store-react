@@ -18,9 +18,9 @@
 **usePersistedState** and **useSessionState** hooks will allow you to create global state variables to share or get across your React application.
 
 ## How it works
-**usePersistedState:**  will allow you to store data and access it anywhere on your React app, even with the app open on different tabs or windows (on the same browser). The data will persist even if the app gets closed (if the localstorage is cleared, the data will get destroyed).
+**usePersistedState:**  will allow you to store data and access it anywhere on your React app, even with the app open on different tabs or windows (on the same browser). The data will persist even if the app gets closed (unless the localstorage is cleared, in this case the data will get destroyed).
 
-**useSessionState:** works as the usePersistedState hook, but encapsules the data so it can be used only on a single client session and it gets destroyed when the user leaves the app.
+**useSessionState:** works as the usePersistedState hook, but encapsules the data so it can be used only on a single client session (read [this](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) to understand when a new session is created) and it gets destroyed as soon as the user leaves the session.
   
 ## Features
 
@@ -36,98 +36,45 @@
 
 ## Install
 
-  
-
-  
 
 ```bash
-
-  
-
 npm install --save @dannyman/use-store
-
-  
-
 ```
 
-  
-
-  
 
 ## Usage
-
-  
-
-  
-
-```jsx
-
-  
-
-import React from  'react';
-
-  
-
-import { usePersistedState, useSessionState } from  '@dannyman/use-store';
-
-  
-
-const  Example  = () => {
-
-const [name, setName] =  useSessionState('app:key:name', 'default value', true);
-
-const [lastName, setLasName] =  usePersistedState('app:key:lastName', 'default value', true);
-
-return (
-
-<div>Hello, {name}  {lastName}</div>
-
-);
-
-};
-
-  
-
-```
-
-  
-
-  
 
 The *usePersistedState* and *useSessionState* hooks will receive the following parameters:
 
   
 
 * **key**: unique key name used to access the state (required).
+* **options**: object with the following options:
+    * **defaultValue** [default = false]: sets the state value to this.
+    * **isNew** [default = false]: overrides any value previously stored on component mount.
+    * **autoRefresh** [default = false]: listens to any changes that occour on the background and updates the state.
 
+## Example
   
+```jsx
+import React from  'react';
+import { usePersistedState, useSessionState } from  '@dannyman/use-store';
 
-* **defaultValue**: sets the state value to this (default = false).
+const  Example  = () => {
+    const [name, setName] =  useSessionState('app:key:name', { defaultValue: 'Danny', isNew: true });
+    const [message] =  usePersistedState('app:key:message', { defaultValue: 'nice to meet you'});
 
-  
-
-* **isNew**: overrides any value previously stored on component mount (default = false).
-
-  
-
-  
+    return (
+        <div>Hello {name},  {message}!</div>
+        <input type="text" onChange={(e) => setName(e.target.value)} />
+    );
+};
+```
 
 ## License
 
-  
-
-  
-
 MIT © [danny-fallas](https://github.com/danny-fallas)
 
-  
-
-  
-
 ---
-
-  
-
-  
 
 This hook is created using [create-react-hook](https://github.com/hermanya/create-react-hook).

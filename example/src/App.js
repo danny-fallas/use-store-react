@@ -4,8 +4,8 @@ import Flex from './components/Flex';
 import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
 const App = () => {
-  const [sessionState, setSessionState] = useSessionState('key:name:session', 'default value', true);
-  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'default value', true);
+  const [sessionState, setSessionState] = useSessionState('key:name:session', { defaultValue: 'Hello world!', isNew: true });
+  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', { defaultValue: 'Gotta catch em all!', isNew: true, autoRefresh: true });
 
   return (
     <React.Fragment>
@@ -19,8 +19,11 @@ const App = () => {
           <ul>
             <li>Works exactly as the <b>useState</b> React Hook.</li>
             <li>Supports all the JavaScript data types and data structures.</li>
+            <li>Persists the data depending on your needs.</li>
             <li>The hooks will update the local or session storage on the background.</li>
             <li>All the data is base64 encoded.</li>
+            <li>No need to use redux.</li>
+            <li>Easy to use.</li>
           </ul>
         </Flex>
         <hr
@@ -56,7 +59,7 @@ const App = () => {
             <p>Use the <i>usePersistedState</i> hook, when you need to create a state to persist data across the browser. This state will be available for the current user, it will detect and sync any changes on the data accross the browser and will persist even when the browser or tab gets closed.</p>
             <ol>
               <li>Add some string value to the input field.</li>
-              <li>Open a new tab <b><span onClick={() => { window.open(window.location.href, '_blank') }}>here</span></b>.</li>
+              <li>Open a new tab <b><span onClick={() => window.open(window.location.href, '_blank')}>here</span></b>.</li>
               <li>On the new tab, add a different string value to the input.</li>
               <li>Both tabs state should persist on reload or redirect.</li>
               <li>The values on each tab should be synced.</li>
