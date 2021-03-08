@@ -19,13 +19,19 @@ const handleState = (storage, key, options) => {
   if (!isBrowser) return ssrStateMock;
 
   const {
-    defaultValue, isNew, autoRefresh
+    defaultValue,
+    isNew,
+    autoRefresh
   } = getValidOptions(options);
 
-  const existentValue = get(storage, key);
-  const [state, setState] = useState(() => !isNew ? (existentValue !== null) ? existentValue : defaultValue : defaultValue);
+  const [state, setState] = useState(() => {
+    const existentValue = get(storage, key);
+    return !isNew ? (existentValue !== null) ? existentValue : defaultValue : defaultValue;
+  });
 
-  useEffect(() => { set(storage, key, state) }, [key, state]);
+  useEffect(() => {
+    set(storage, key, state)
+  }, [key, state]);
 
   useLayoutEffect(() => {
     if (autoRefresh) {
