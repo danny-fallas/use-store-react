@@ -29,9 +29,9 @@ const get = (storage, key) => {
 const refresh = (callback) => setInterval(callback, 500);
 
 const getValidOptions = (options) => ({
-    defaultValue: options?.defaultValue || false,
-    isNew: options?.isNew || false,
     autoRefresh: options?.autoRefresh || false,
+    debug: options?.debug || false,
+    isNew: options?.isNew || false,
 });
 
 const stateShouldUpdate = (state, newState) => {
@@ -46,6 +46,8 @@ const stateShouldUpdate = (state, newState) => {
     }
 };
 
+const log = (message, debug = false) => (debug && console.log(message) && true);
+
 export {
     ssrStateMock,
     isBrowser,
@@ -53,5 +55,6 @@ export {
     get,
     refresh,
     getValidOptions,
-    stateShouldUpdate
+    stateShouldUpdate,
+    log
 };

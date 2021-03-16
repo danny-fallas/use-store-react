@@ -13,6 +13,7 @@
 
 [![NPM](https://img.shields.io/npm/v/@dannyman/use-store.svg)](https://www.npmjs.com/package/@dannyman/use-store) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+
  ## Overview
  
 **usePersistedState** and **useSessionState** hooks will allow you to create global state variables to share or get across your React application.
@@ -49,10 +50,10 @@ The *usePersistedState* and *useSessionState* hooks will receive the following p
   
 
 * **key**: unique key name used to access the state (required).
+* **defaultValue**: sets the state value to this value (default = false).
 * **options**: object with the following options:
-    * **defaultValue** [default = false]: sets the state value to this.
-    * **isNew** [default = false]: overrides any value previously stored on component mount.
-    * **autoRefresh** [default = false]: listens to any changes that occour on the background and updates the state.
+    * **isNew**: overrides any value previously stored on component mount (default = false).
+    * **autoRefresh**: listens to any changes that happen on the background and updates the current state (default = false).
 
 ## Example
   
@@ -61,8 +62,8 @@ import React from  'react';
 import { usePersistedState, useSessionState } from  '@dannyman/use-store';
 
 const  Example  = () => {
-    const [name, setName] =  useSessionState('app:key:name', { defaultValue: 'Danny', isNew: true });
-    const [message] =  usePersistedState('app:key:message', { defaultValue: 'nice to meet you'});
+    const [name, setName] =  useSessionState('app:key:name','Danny', { isNew: true });
+    const [message] =  usePersistedState('app:key:message', 'nice to meet you');
 
     return (
         <div>Hello {name},  {message}!</div>
@@ -70,6 +71,15 @@ const  Example  = () => {
     );
 };
 ```
+ ## Changelog
+ 
+ v1.1.1
+ * Reverted the hook signature to accept the default value outside of the options object.
+
+v1.1.0
+* Enable the hook to listen for changes on the background.
+* Using the options object to support more functionality in the future.
+
 
 ## License
 

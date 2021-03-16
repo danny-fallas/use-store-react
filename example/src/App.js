@@ -4,8 +4,8 @@ import Flex from './components/Flex';
 import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
 const App = () => {
-  const [sessionState, setSessionState] = useSessionState('key:name:session', { defaultValue: 'Hello world!', isNew: true });
-  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', { defaultValue: 'Gotta catch em all!', isNew: true, autoRefresh: true });
+  const [sessionState, setSessionState] = useSessionState('key:name:session', 'Hello world!', { isNew: true });
+  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: true, autoRefresh: true });
 
   return (
     <React.Fragment>

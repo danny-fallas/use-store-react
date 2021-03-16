@@ -15,13 +15,13 @@ import {
 } from './functions';
 
 // Private functions
-const handleState = (storage, key, options) => {
+const handleState = (storage, key, defaultValue, options) => {
   if (!isBrowser) return ssrStateMock;
 
   const {
-    defaultValue,
+    autoRefresh,
+    debug,
     isNew,
-    autoRefresh
   } = getValidOptions(options);
 
   const [state, setState] = useState(() => {
@@ -48,8 +48,8 @@ const handleState = (storage, key, options) => {
 };
 
 // Public functions
-const usePersistedState = (key, options) => handleState(localStorage, key, options);
-const useSessionState = (key, options) => handleState(sessionStorage, key, options);
+const usePersistedState = (key, defaultValue, options) => handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key, defaultValue, options) => handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {
