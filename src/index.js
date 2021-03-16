@@ -15,7 +15,7 @@ import {
 } from './functions';
 
 // Private functions
-const handleState = (storage, key, defaultValue, options) => {
+const handleState = (storage, key, defaultValue = false, options) => {
   if (!isBrowser) return ssrStateMock;
 
   const {
