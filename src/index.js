@@ -5,19 +5,17 @@ import {
   useLayoutEffect
 } from 'react';
 import {
-  ssrStateMock,
-  isBrowser,
   refresh,
   set,
   get,
   getValidOptions,
-  stateShouldUpdate
+  stateShouldUpdate,
+  isSSR
 } from './functions';
 
 // Private functions
-const handleState = (storage, key, defaultValue = false, options) => {
-  if (!isBrowser) return ssrStateMock;
 
+const handleState = (storage, key, defaultValue = false, options) => {
   const {
     autoRefresh,
     debug,
@@ -48,8 +46,8 @@ const handleState = (storage, key, defaultValue = false, options) => {
 };
 
 // Public functions
-const usePersistedState = (key, defaultValue, options) => handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key, defaultValue, options) => handleState(sessionStorage, key, defaultValue, options);
+const usePersistedState = (key, defaultValue, options) => isSSR() || handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key, defaultValue, options) => isSSR() || handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {

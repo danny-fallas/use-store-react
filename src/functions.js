@@ -48,13 +48,14 @@ const stateShouldUpdate = (state, newState) => {
 
 const log = (message, debug = false) => (debug && console.log(message) && true);
 
+const isSSR = () => (!isBrowser ? ssrStateMock : false);
+
 export {
-    ssrStateMock,
-    isBrowser,
     set,
     get,
     refresh,
     getValidOptions,
     stateShouldUpdate,
-    log
+    log,
+    isSSR
 };

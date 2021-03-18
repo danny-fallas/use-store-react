@@ -72,7 +72,10 @@ const  Example  = () => {
 };
 ```
  ## Changelog
- 
+
+ v1.1.2
+ * Fixing issue that caused SSR frameworks to fail on build.
+
  v1.1.1
  * Reverted the hook signature to accept the default value outside of the options object.
 
