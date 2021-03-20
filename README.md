@@ -49,14 +49,16 @@ The *usePersistedState* and *useSessionState* hooks will receive the following p
 
   
 
-* **key**: unique key name used to access the state. **[required]**
-* **defaultValue**: sets the state value to this value. **[default = false]**
+* **key**: unique key name used to access the state. **required**
+* **defaultValue**: sets the state value to this value. **default = false**
 * **options**: object with the following options:
-    * **isNew**: overrides any value previously stored on component mount. **[default = false]**
-    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. **[default = false]**
-    * **debug**: shows information about the state status. **[default = false]**
+    * **isNew**: overrides any value previously stored on component mount. **default = false**
+    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. **default = false**
+    * **debug**: shows information about the state status. **default = false**
 
- \* EXPERIMENTAL FEATURE, you could experience some issues as this uses the setInterval timer (to be updated to eventListeners).
+
+
+_\* EXPERIMENTAL FEATURE, you could experience some issues as this uses the setInterval timer (to be updated to eventListeners)._
 
 ## Example
   
