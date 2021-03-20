@@ -13,17 +13,34 @@ const isTheSameObject = (object1, object2) => JSON.stringify(Object.values(objec
 
 const isTheSameArray = (arr1, arr2) => (arr1 && arr2) && (arr1.length === arr2.length) && arr1.every(value1 => arr2.some((value2) => isTheSameObject(value1, value2)));
 
-// Public Consts
+const isNullOrUndefined = (value) => (typeof value === 'undefined' || value === null);
+
+const isFunction = (value) => (typeof value === 'function');
+
+// Consts
 const ssrStateMock = [false, () => false];
 
 const isBrowser = (typeof window !== 'undefined');
 
+const validations = {
+    isSameType,
+    isNumber,
+    isArray,
+    isObject,
+    isString,
+    isTheSameObject,
+    isTheSameArray,
+    isNullOrUndefined,
+    isFunction
+};
+
 // Public Functions
-const set = (storage, key, value) => storage.setItem(key, btoa(JSON.stringify(value || null)));
+
+const set = (storage, key, value) => storage.setItem(key, btoa(JSON.stringify(value)));
 
 const get = (storage, key) => {
     const raw = storage.getItem(key);
-    return (raw && raw.length) ? JSON.parse(atob(raw)) : null;
+    return (raw && raw.length) ? JSON.parse(atob(raw)) : false;
 };
 
 const refresh = (callback) => setInterval(callback, 500);
@@ -37,7 +54,7 @@ const getValidOptions = (options) => ({
 const stateShouldUpdate = (state, newState) => {
     switch (true) {
         case !isSameType(state, newState):
-        case (isObject(newState) && !isTheSameObject(state, newState)):
+        case (isObject(newState) && !isNullOrUndefined(newState) && !isTheSameObject(state, newState)):
         case (isArray(newState) && !isTheSameArray(state, newState)):
         case ((isString(newState) || isNumber(newState)) && state !== newState):
             return true;
@@ -46,16 +63,28 @@ const stateShouldUpdate = (state, newState) => {
     }
 };
 
-const log = (message, debug = false) => (debug && console.log(message) && true);
+const writeToLog = (debug, key) => {
+    return debug ?
+        (message, object = () => { }, err = false) => {
+            console.group(`[@dannyman/use-store]@%c${key}`, 'color: blue;');
+
+            if (message) console.log(`${err ? '%cERROR: ' : '%c'}${message}`, `color: ${err ? 'red' : 'green'};`);
+            if (!isFunction(object)) console.log(`${typeof object} =>`, JSON.parse(JSON.stringify(object)));
+
+            console.groupEnd();
+        } : () => { };
+};
 
 const isSSR = () => (!isBrowser ? ssrStateMock : false);
 
 export {
+    validations,
+    ssrStateMock,
     set,
     get,
     refresh,
     getValidOptions,
     stateShouldUpdate,
-    log,
+    writeToLog,
     isSSR
 };

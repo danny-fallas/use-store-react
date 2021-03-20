@@ -4,8 +4,12 @@ import Flex from './components/Flex';
 import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
 const App = () => {
-  const [sessionState, setSessionState] = useSessionState('key:name:session', 'Hello world!', { isNew: true });
-  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: true, autoRefresh: true });
+  const [sessionState, setSessionState] = useSessionState('key:name:session', { message: 'Hello world!' }, { isNew: true, debug: true });
+  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: false, autoRefresh: true });
+
+  const onUpdate = (value) => {
+    setSessionState({ message: value });
+  };
 
   return (
     <React.Fragment>
@@ -47,8 +51,8 @@ const App = () => {
             </ol>
             <input
               type="text"
-              onChange={(e) => setSessionState(e.target.value)} />
-            <p><b>Value:</b> {`${sessionState}`} </p>
+              onChange={(e) => onUpdate(e.target.value)} />
+            <p><b>Value:</b> {`${sessionState.message}`} </p>
           </Flex>
           <hr
             style={{ width: '80%' }} />

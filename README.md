@@ -49,11 +49,14 @@ The *usePersistedState* and *useSessionState* hooks will receive the following p
 
   
 
-* **key**: unique key name used to access the state (required).
-* **defaultValue**: sets the state value to this value (default = false).
+* **key**: unique key name used to access the state. **[required]**
+* **defaultValue**: sets the state value to this value. **[default = false]**
 * **options**: object with the following options:
-    * **isNew**: overrides any value previously stored on component mount (default = false).
-    * **autoRefresh**: listens to any changes that happen on the background and updates the current state (default = false).
+    * **isNew**: overrides any value previously stored on component mount. **[default = false]**
+    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. **[default = false]**
+    * **debug**: shows information about the state status. **[default = false]**
+
+ \* EXPERIMENTAL FEATURE, you could experience some issues as this uses the setInterval timer (to be updated to eventListeners).
 
 ## Example
   
@@ -72,6 +75,11 @@ const  Example  = () => {
 };
 ```
  ## Changelog
+
+ v1.1.3
+ * Adding the "debug" option, to log information about the state.
+ * New validation to avoid functions as the defaultValue.
+ * Minor performance improvements.
 
  v1.1.2
  * Fixing issue that caused SSR frameworks to fail on build.
