@@ -62,8 +62,8 @@ const handleState = (storage, key, defaultValue = false, options) => {
 };
 
 // Public functions
-const usePersistedState = (key, defaultValue, options) => isSSR() || handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key, defaultValue, options) => isSSR() || handleState(sessionStorage, key, defaultValue, options);
+const usePersistedState = (key, defaultValue, options) => isSSR(defaultValue) || handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key, defaultValue, options) => isSSR(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {

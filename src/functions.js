@@ -17,8 +17,14 @@ const isNullOrUndefined = (value) => (typeof value === 'undefined' || value === 
 
 const isFunction = (value) => (typeof value === 'function');
 
+const mbSize = str => (new Blob([str]).size) / 1048576;
+
+const btoa = str => new Buffer.from(str, 'binary').toString('base64');
+
+const atob = str => Buffer.from(str, 'base64').toString('binary');
+
 // Consts
-const ssrStateMock = [false, () => false];
+const ssrStateMock = (defaultValue = false) => [defaultValue, () => false];
 
 const isBrowser = (typeof window !== 'undefined');
 
@@ -36,11 +42,22 @@ const validations = {
 
 // Public Functions
 
-const set = (storage, key, value) => storage.setItem(key, btoa(JSON.stringify(value)));
+const set = (storage, key, value) => {
+    const encoded = btoa(encodeURI(JSON.stringify(value)));
+    const encodedSize = mbSize(encoded);
+    
+    // TO DO: divide segments to allow them on localstorage
+    // do {
+        
+    // } while (condition);
+    
+    console.log('encs', )
+    storage.setItem(key, encoded);
+}
 
 const get = (storage, key) => {
     const raw = storage.getItem(key);
-    return (raw && raw.length) ? JSON.parse(atob(raw)) : false;
+    return (raw && raw.length) ? JSON.parse(atob(decodeURI(raw))) : false;
 };
 
 const refresh = (callback) => setInterval(callback, 500);
@@ -75,7 +92,7 @@ const writeToLog = (debug, key) => {
         } : () => { };
 };
 
-const isSSR = () => (!isBrowser ? ssrStateMock : false);
+const isSSR = (defaultValue) => (!isBrowser ? ssrStateMock(defaultValue) : false);
 
 export {
     validations,

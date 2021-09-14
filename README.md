@@ -78,6 +78,9 @@ const  Example  = () => {
 ```
  ## Changelog
 
+ v1.1.4
+ * Use the defaulValue (if any provided) instead of defaulting to false on SSR.
+ 
  v1.1.3
  * Adding the "debug" option, to log information about the state.
  * New validation to avoid functions as the defaultValue.
