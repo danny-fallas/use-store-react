@@ -1,6 +1,6 @@
 {
   "name": "@dannyman/use-store",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Custom React Hook that enables a global Store.",
   "main": ".build/index.js",
   "module": ".build/index.js",

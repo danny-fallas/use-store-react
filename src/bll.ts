@@ -1,8 +1,8 @@
 /** TYPES */
 type IOptionsAvailable = {
-    autoRefresh: boolean,
-    debug: boolean,
-    isNew: boolean,
+    autoRefresh?: boolean,
+    debug?: boolean,
+    isNew?: boolean,
 };
 
 /** PRIVATE FUNCTIONS */
