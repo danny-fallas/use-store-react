@@ -77,10 +77,11 @@ const  Example  = () => {
 };
 ```
  ## Changelog
- v2.0
- * React 18
- * Typescript
- * Removed unused dependencies
+ v2.0.0
+ * Updated to support React 18
+ * Migrated to Typescript
+ * Removed unnecessary dependencies and files
+ * Allow null defaultValues
 
  v1.1.4
  * Use the defaulValue (if any provided) instead of defaulting to false on SSR.
