@@ -1,15 +1,18 @@
-import React from 'react';
-import Flex from './components/Flex';
+import React, { useState } from 'react';
+import Flex from './Flex';
 
 import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
 const App = () => {
   const [sessionState, setSessionState] = useSessionState('key:name:session', { message: 'Hello world!' }, { isNew: true, debug: true });
-  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: false, autoRefresh: true });
+  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: false, autoRefresh: true, debug: true });
+  const [anotherPersistedState] = usePersistedState('key:name:anotherpersisted', null);
 
   const onUpdate = (value) => {
     setSessionState({ message: value });
   };
+
+  console.info('Another Persisted Key, with read-only options:', anotherPersistedState);
 
   return (
     <React.Fragment>

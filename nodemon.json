@@ -1,0 +1,10 @@
+{
+    "delay": 1000,
+    "exec": "npm run build",
+    "ext": "ts,tsx",
+    "ignore": [
+        "*.test.js",
+        "**/.build/**"
+    ],
+    "signal": "SIGHUP"
+}

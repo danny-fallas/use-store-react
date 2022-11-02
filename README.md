@@ -77,6 +77,10 @@ const  Example  = () => {
 };
 ```
  ## Changelog
+ v2.0
+ * React 18
+ * Typescript
+ * Removed unused dependencies
 
  v1.1.4
  * Use the defaulValue (if any provided) instead of defaulting to false on SSR.
@@ -102,5 +106,3 @@ v1.1.0
 MIT © [danny-fallas](https://github.com/danny-fallas)
 
 ---
-
-This hook is created using [create-react-hook](https://github.com/hermanya/create-react-hook).
