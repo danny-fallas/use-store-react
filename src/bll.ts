@@ -16,7 +16,7 @@ const mbSize = (str: string) => (new Blob([str]).size) / 1048576;
 
 /** CONSTANTS */
 
-const ssrStateMock = (defaultValue = false) => [defaultValue, () => false];
+const ssrStateMock = (defaultValue = undefined) => [defaultValue, () => false];
 
 const isBrowser = (typeof window !== 'undefined');
 
@@ -45,7 +45,7 @@ const get = (storage: Storage, key: string) => {
         let value = raw;
         value = atob(value);
         value = decodeURI(value);
-        if (value) value = JSON.parse(value);
+        if (value && value !== 'undefined') value = JSON.parse(value);
 
         return value;
     } else {

@@ -19,7 +19,7 @@ import {
 
 // Private functions
 
-const handleState = (storage: Storage, key: string, defaultValue: any = false, options?: IOptionsAvailable) => {
+const handleState = (storage: Storage, key: string, defaultValue: any, options?: IOptionsAvailable) => {
   const {
     autoRefresh,
     isNew,
@@ -30,7 +30,7 @@ const handleState = (storage: Storage, key: string, defaultValue: any = false, o
   const [state, setState] = useState(() => {
     if (defaultValue instanceof Function) {
       log('The defaultValue cannot be a function.', defaultValue, true);
-      defaultValue = false;
+      defaultValue = undefined;
     }
 
     const existentValue = get(storage, key);
