@@ -6,6 +6,7 @@ import {
   useCallback
 } from 'react';
 import {
+  IOptionsAvailable,
   validations,
   refresh,
   set,
@@ -14,27 +15,26 @@ import {
   stateShouldUpdate,
   writeToLog,
   isSSR
-} from './functions';
+} from './bll';
 
 // Private functions
 
-const handleState = (storage, key, defaultValue = false, options) => {
+const handleState = (storage: Storage, key: string, defaultValue: any, options?: IOptionsAvailable) => {
   const {
     autoRefresh,
     isNew,
     debug,
   } = getValidOptions(options);
-
-  const log = useCallback(writeToLog(debug, key));
+  const log = useCallback(writeToLog(debug, key), [debug, key]);
 
   const [state, setState] = useState(() => {
-    if (validations.isFunction(defaultValue)) {
+    if (defaultValue instanceof Function) {
       log('The defaultValue cannot be a function.', defaultValue, true);
-      defaultValue = false;
+      defaultValue = undefined;
     }
 
     const existentValue = get(storage, key);
-    const _defaultValue = !isNew ? (existentValue !== null) ? existentValue : defaultValue : defaultValue;
+    const _defaultValue = !isNew ? (existentValue !== undefined) ? existentValue : defaultValue : defaultValue;
     log('Default Value:', _defaultValue);
     return _defaultValue;
   });
@@ -62,8 +62,8 @@ const handleState = (storage, key, defaultValue = false, options) => {
 };
 
 // Public functions
-const usePersistedState = (key, defaultValue, options) => isSSR(defaultValue) || handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key, defaultValue, options) => isSSR(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
+const usePersistedState = (key: string, defaultValue: any, options?: IOptionsAvailable) => isSSR(defaultValue) || handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key: string, defaultValue: any, options: IOptionsAvailable) => isSSR(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {

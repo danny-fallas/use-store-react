@@ -1,26 +1,17 @@
 {
   "name": "@dannyman/use-store",
-  "version": "1.1.4",
-  "description": "Custom React Hook to enable Store usage without Redux",
-  "author": "danny-fallas",
-  "license": "MIT",
-  "repository": "danny-fallas/use-store-react",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
-  "engines": {
-    "node": ">=8",
-    "npm": ">=5"
-  },
+  "version": "2.0.0",
+  "description": "Custom React Hook that enables a global Store.",
+  "main": ".build/index.js",
+  "module": ".build/index.js",
+  "jsnext:main": ".build/index.js",
   "scripts": {
-    "test": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
-    "prepare": "npm run build",
-    "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "build": "tsc",
+    "dev": "nodemon & npm start --prefix=./example/",
+    "example": "npm run build && npm start --prefix=./example/",
+    "test": "echo \"Info: no test specified\" && exit 1"
   },
+  "repository": "danny-fallas/use-store-react",
   "keywords": [
     "react",
     "localstorage",
@@ -29,50 +20,19 @@
     "useState",
     "hook"
   ],
-  "peerDependencies": {
-    "react": "^16.9.0"
+  "author": "Danny Fallas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danny-fallas/use-store-react/issues"
   },
+  "homepage": "https://github.com/danny-fallas/use-store-react#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-external-helpers": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-do-expressions": "^7.0.0",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0",
-    "@babel/plugin-proposal-function-sent": "^7.0.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
-    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "@testing-library/react-hooks": "^3.2.1",
-    "babel-eslint": "^10.0.1",
-    "cross-env": "^5.2.0",
-    "eslint": "5.16.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-config-standard-react": "^6.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-react": "^7.10.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "gh-pages": "^2.0.1",
-    "react": "^16.9.0",
-    "react-scripts": "^3.4.0",
-    "react-test-renderer": "^16.9.0",
-    "rollup": "^1.1.2",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-url": "^2.1.0"
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.24",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
   }
 }
