@@ -4,7 +4,7 @@
     "ext": "ts,tsx",
     "ignore": [
         "*.test.js",
-        "**/.build/**"
+        "**/dist/**"
     ],
     "signal": "SIGHUP"
 }

@@ -2,12 +2,10 @@
 import {
   useState,
   useEffect,
-  useLayoutEffect,
   useCallback
 } from 'react';
 import {
   IOptionsAvailable,
-  validations,
   refresh,
   set,
   get,
@@ -44,7 +42,7 @@ const handleState = (storage: Storage, key: string, defaultValue: any, options?:
     set(storage, key, state);
   }, [key, state]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (autoRefresh) {
       const interval = refresh(() => {
         const newState = get(storage, key);

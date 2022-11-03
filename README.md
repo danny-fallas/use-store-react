@@ -77,7 +77,7 @@ const  Example  = () => {
 };
 ```
  ## Changelog
- v2.0.1
+ v2.0.4
  * Updated to support React 18
  * Migrated to Typescript
  * Removed unnecessary dependencies and files

@@ -2,7 +2,7 @@
 type IOptionsAvailable = {
     autoRefresh?: boolean,
     debug?: boolean,
-    isNew?: boolean,
+    isNew?: boolean
 };
 
 /** PRIVATE FUNCTIONS */
@@ -12,11 +12,11 @@ const isTheSameObject = (object1: object, object2: object) => JSON.stringify(Obj
 
 const isTheSameArray = (arr1: Array<any>, arr2: Array<any>) => (arr1 && arr2) && (arr1.length === arr2.length) && arr1.every(value1 => arr2.some((value2) => isTheSameObject(value1, value2)));
 
-const mbSize = (str: string) => (new Blob([str]).size) / 1048576;
+// const mbSize = (str: string) => (new Blob([str]).size) / 1048576;
 
 /** CONSTANTS */
 
-const ssrStateMock = (defaultValue = undefined) => [defaultValue, () => false];
+const ssrStateMock = (defaultValue: any = undefined) => [defaultValue, () => false];
 
 const isBrowser = (typeof window !== 'undefined');
 
