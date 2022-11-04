@@ -5,41 +5,63 @@ import {
   useCallback
 } from 'react';
 import {
-  IOptionsAvailable,
-  refresh,
   set,
   get,
+  refresh,
+  ssrMock,
+  writeToLog,
   getValidOptions,
   stateShouldUpdate,
-  writeToLog,
-  isSSR
+  IOptionsAvailable,
 } from './bll';
 
 // Private functions
-
 const handleState = (storage: Storage, key: string, defaultValue: any, options?: IOptionsAvailable) => {
+
   const {
     autoRefresh,
     isNew,
     debug,
+    isSSR,
   } = getValidOptions(options);
-  const log = useCallback(writeToLog(debug, key), [debug, key]);
 
-  const [state, setState] = useState(() => {
-    if (defaultValue instanceof Function) {
+  const log = useCallback(writeToLog(debug, key), [debug, key]);
+  const getInitialValue = (onFirstRender: boolean = false) => {
+    let _defaultValue = defaultValue;
+
+    if (_defaultValue instanceof Function) {
       log('The defaultValue cannot be a function.', defaultValue, true);
-      defaultValue = undefined;
+      _defaultValue = undefined;
     }
 
-    const existentValue = get(storage, key);
-    const _defaultValue = !isNew ? (existentValue !== undefined) ? existentValue : defaultValue : defaultValue;
+    if (isNew || (isSSR && !onFirstRender)) {
+      _defaultValue = defaultValue
+    } else {
+      const existentValue = get(storage, key);
+      _defaultValue = (existentValue !== undefined && existentValue !== 'undefined') ? existentValue : defaultValue;
+    }
+
     log('Default Value:', _defaultValue);
     return _defaultValue;
-  });
+  };
+
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [state, setState] = useState<any>(getInitialValue);
 
   useEffect(() => {
-    log('Updated value:', state);
-    set(storage, key, state);
+    setIsFirstRender(false);
+
+    if (isFirstRender && !isNew && isSSR) {
+      log('SSR: updating the default value.');
+      setState(getInitialValue(true));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isFirstRender) {
+      log('Updated value:', state);
+      set(storage, key, state);
+    }
   }, [key, state]);
 
   useEffect(() => {
@@ -60,8 +82,8 @@ const handleState = (storage: Storage, key: string, defaultValue: any, options?:
 };
 
 // Public functions
-const usePersistedState = (key: string, defaultValue: any, options?: IOptionsAvailable) => isSSR(defaultValue) || handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key: string, defaultValue: any, options: IOptionsAvailable) => isSSR(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
+const usePersistedState = (key: string, defaultValue: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key: string, defaultValue: any, options: IOptionsAvailable) => ssrMock(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {

@@ -2,7 +2,8 @@
 type IOptionsAvailable = {
     autoRefresh?: boolean,
     debug?: boolean,
-    isNew?: boolean
+    isNew?: boolean,
+    isSSR?: boolean,
 };
 
 /** PRIVATE FUNCTIONS */
@@ -59,6 +60,7 @@ const getValidOptions = (options?: IOptionsAvailable) => ({
     autoRefresh: options?.autoRefresh || false,
     debug: options?.debug || false,
     isNew: options?.isNew || false,
+    isSSR: options?.isSSR || false,
 });
 
 const stateShouldUpdate = (state: any, newState: any) => {
@@ -88,17 +90,18 @@ const writeToLog = (debug: boolean, key: string) => {
     }
 };
 
-const isSSR = (defaultValue: any) => (!isBrowser ? ssrStateMock(defaultValue) : false);
+const ssrMock = (defaultValue: any) => (!isBrowser ? ssrStateMock(defaultValue) : false);
 
 export {
     IOptionsAvailable,
+    isBrowser,
     validations,
-    ssrStateMock,
     set,
     get,
     refresh,
+    ssrMock,
+    writeToLog,
+    ssrStateMock,
     getValidOptions,
     stateShouldUpdate,
-    writeToLog,
-    isSSR
 };

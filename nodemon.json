@@ -1,6 +1,6 @@
 {
     "delay": 1000,
-    "exec": "npm run build",
+    "exec": "npm run example",
     "ext": "ts,tsx",
     "ignore": [
         "*.test.js",
