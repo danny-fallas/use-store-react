@@ -42,6 +42,7 @@
 npm install --save @dannyman/use-store
 ```
 
+_Use the latest version for better support. Or use @1.1.4 if you are still using v1_
 
 ## Usage
 
@@ -53,12 +54,13 @@ The *usePersistedState* and *useSessionState* hooks will receive the following p
 * **defaultValue**: sets the state value to this value. **default = false**
 * **options**: object with the following options:
     * **isNew**: overrides any value previously stored on component mount. **default = false**
-    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. **default = false**
+    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. This uses the setInterval timer (to be updated to eventListeners) **default = false**
     * **debug**: shows information about the state status. **default = false**
+    * **isSSR** (\*): the instantiation of the state will use the default value provided to match server output (if you are using the state to render inside a view), and then if it's not new it will update with the stored value. **default = false**
 
 
 
-_\* EXPERIMENTAL FEATURE, you could experience some issues as this uses the setInterval timer (to be updated to eventListeners)._
+_\* EXPERIMENTAL FEATURE, you could experience some issues._
 
 ## Example
   
@@ -77,6 +79,9 @@ const  Example  = () => {
 };
 ```
  ## Changelog
+  v2.0.4
+ * Added support for SSR frameworks (isSSR option)
+
  v2.0.4
  * Updated to support React 18
  * Migrated to Typescript
@@ -96,10 +101,10 @@ const  Example  = () => {
 
  v1.1.1
  * Reverted the hook signature to accept the default value outside of the options object.
-
-v1.1.0
-* Enable the hook to listen for changes on the background.
-* Using the options object to support more functionality in the future.
+ 
+ v1.1.0
+ * Enable the hook to listen for changes on the background.
+ * Using the options object to support more functionality in the future.
 
 
 ## License
