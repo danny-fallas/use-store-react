@@ -79,7 +79,7 @@ const  Example  = () => {
 };
 ```
  ## Changelog
-  v2.0.4
+ v2.0.6
  * Added support for SSR frameworks (isSSR option)
 
  v2.0.4
