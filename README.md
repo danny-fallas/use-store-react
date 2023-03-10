@@ -42,7 +42,7 @@
 npm install --save @dannyman/use-store
 ```
 
-_Use the latest version for better support. Or use @1.1.4 if you are still using v1_
+_Use the latest version for better support. Or use @1.1.3 if you are still using v1_
 
 ## Usage
 
@@ -79,6 +79,12 @@ const  Example  = () => {
 };
 ```
  ## Changelog
+ v2.0.9
+ * Allow persisted state read-only values with no defaults
+
+ v2.0.7
+ * Fixed TS issue on useSessionState hook
+
  v2.0.6
  * Added support for SSR frameworks (isSSR option)
 

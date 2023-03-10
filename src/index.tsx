@@ -16,8 +16,7 @@ import {
 } from './bll';
 
 // Private functions
-const handleState = (storage: Storage, key: string, defaultValue: any, options?: IOptionsAvailable) => {
-
+const handleState = (storage: Storage, key: string, defaultValue?: any, options?: IOptionsAvailable) => {
   const {
     autoRefresh,
     isNew,
@@ -82,8 +81,8 @@ const handleState = (storage: Storage, key: string, defaultValue: any, options?:
 };
 
 // Public functions
-const usePersistedState = (key: string, defaultValue: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key: string, defaultValue: any, options: IOptionsAvailable) => ssrMock(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
+const usePersistedState = (key: string, defaultValue?: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(localStorage, key, defaultValue, options);
+const useSessionState = (key: string, defaultValue?: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
 
 // Exports
 export {
