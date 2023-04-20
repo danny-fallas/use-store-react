@@ -81,8 +81,6 @@ const  Example  = () => {
  ## Changelog
  v2.0.9
  * Allow persisted state read-only values with no defaults
-
- v2.0.7
  * Fixed TS issue on useSessionState hook
 
  v2.0.6
@@ -94,23 +92,14 @@ const  Example  = () => {
  * Removed unnecessary dependencies and files
  * Allow null defaultValues
 
- v1.1.4
- * Use the defaulValue (if any provided) instead of defaulting to false on SSR.
- 
  v1.1.3
- * Adding the "debug" option, to log information about the state.
- * New validation to avoid functions as the defaultValue.
- * Minor performance improvements.
-
- v1.1.2
- * Fixing issue that caused SSR frameworks to fail on build.
-
- v1.1.1
- * Reverted the hook signature to accept the default value outside of the options object.
- 
- v1.1.0
- * Enable the hook to listen for changes on the background.
- * Using the options object to support more functionality in the future.
+ * Using provided defaultValue during server-side rendering.
+ * Adding "debug" option for logging.
+ * Validating non-function defaultValue.
+ * Fixing server-side rendering framework issue.
+ * Reverting hook signature for defaultValue.
+ * Enabling background change listening.
+ * Implementing options object for future functionality.
 
 
 ## License
