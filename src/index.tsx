@@ -7,18 +7,16 @@ import {
 import {
   set,
   get,
-  refresh,
   ssrMock,
   writeToLog,
   getValidOptions,
-  stateShouldUpdate,
   IOptionsAvailable,
 } from './bll';
 
 // Private functions
 const handleState = (storage: Storage, key: string, defaultValue?: any, options?: IOptionsAvailable) => {
   const {
-    autoRefresh,
+    listen,
     isNew,
     debug,
     isSSR,
@@ -47,12 +45,29 @@ const handleState = (storage: Storage, key: string, defaultValue?: any, options?
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [state, setState] = useState<any>(getInitialValue);
 
+  const onStorageEvent = (event: StorageEvent) => {
+    if (event.isTrusted && event.oldValue !== event.newValue) {
+      const newState = get(storage, key);
+      log('Listener: updating the state value.');
+      setState(newState);
+    }
+  };
+
   useEffect(() => {
     setIsFirstRender(false);
 
     if (isFirstRender && !isNew && isSSR) {
       log('SSR: updating the default value.');
       setState(getInitialValue(true));
+    }
+
+    if (listen) {
+      log('Listener: attaching a listener.');
+      window.onstorage = onStorageEvent;
+      return () => {
+        log('Listener: removing a listener.');
+        window.onstorage = null;
+      };
     }
   }, []);
 
@@ -62,20 +77,6 @@ const handleState = (storage: Storage, key: string, defaultValue?: any, options?
       set(storage, key, state);
     }
   }, [key, state]);
-
-  useEffect(() => {
-    if (autoRefresh) {
-      const interval = refresh(() => {
-        const newState = get(storage, key);
-        if (stateShouldUpdate(state, newState)) {
-          log('Auto refresh updating.');
-          setState(newState);
-        }
-      });
-
-      return () => clearInterval(interval);
-    }
-  }, [state]);
 
   return [state, setState];
 };

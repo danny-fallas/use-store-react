@@ -54,7 +54,7 @@ The *usePersistedState* and *useSessionState* hooks will receive the following p
 * **defaultValue**: sets the state value to this value. **default = false**
 * **options**: object with the following options:
     * **isNew**: overrides any value previously stored on component mount. **default = false**
-    * **autoRefresh** (\*): listens to any changes that happen on the background and updates the current state. This uses the setInterval timer (to be updated to eventListeners) **default = false**
+    * **listen** (\*): listens to any changes that happen on the background and updates the current state. Works for usePersistedState only. **default = false**
     * **debug**: shows information about the state status. **default = false**
     * **isSSR** (\*): the instantiation of the state will use the default value provided to match server output (if you are using the state to render inside a view), and then if it's not new it will update with the stored value. **default = false**
 
@@ -79,6 +79,10 @@ const  Example  = () => {
 };
 ```
  ## Changelog
+ v2.1.0
+ * Using event listeners instead of timeouts to refresh the data on the usePersistedState hook
+ * Changed the option autoRefresh to listen
+
  v2.0.9
  * Allow persisted state read-only values with no defaults
  * Fixed TS issue on useSessionState hook

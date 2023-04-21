@@ -1,6 +1,6 @@
 /** TYPES */
 type IOptionsAvailable = {
-    autoRefresh?: boolean,
+    listen?: boolean,
     debug?: boolean,
     isNew?: boolean,
     isSSR?: boolean,
@@ -57,7 +57,7 @@ const get = (storage: Storage, key: string) => {
 const refresh = (callback: Function) => setInterval(callback, 500);
 
 const getValidOptions = (options?: IOptionsAvailable) => ({
-    autoRefresh: options?.autoRefresh || false,
+    listen: options?.listen || false,
     debug: options?.debug || false,
     isNew: options?.isNew || false,
     isSSR: options?.isSSR || false,

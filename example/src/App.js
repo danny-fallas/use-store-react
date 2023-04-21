@@ -5,7 +5,7 @@ import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
 const App = () => {
   const [sessionState, setSessionState] = useSessionState('key:name:session', { message: 'Hello world!' }, { isNew: true, debug: true });
-  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: false, autoRefresh: true, debug: true });
+  const [persistedState, setPersistedState] = usePersistedState('key:name:persisted', 'Gotta catch em all!', { isNew: false, listen: true, debug: true });
 
   const [, setAnotherSessionState] = useSessionState('key:name:anothersession');
   const [anotherPersistedState] = usePersistedState('key:name:anotherpersisted', null);
