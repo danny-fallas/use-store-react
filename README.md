@@ -42,7 +42,7 @@
 npm install --save @dannyman/use-store
 ```
 
-_Use the latest version for better support. Or use @1.1.3 if you are still using v1_
+_Use the latest version for better support. Or upgrade to @1.1.3 if you are still using v1_
 
 ## Usage
 
@@ -70,7 +70,7 @@ import { usePersistedState, useSessionState } from  '@dannyman/use-store';
 
 const  Example  = () => {
     const [name, setName] =  useSessionState('app:key:name','Danny', { isNew: true });
-    const [message] =  usePersistedState('app:key:message', 'nice to meet you');
+    const [message] =  usePersistedState('app:key:message', 'nice to meet you', { listen: true });
 
     return (
         <div>Hello {name},  {message}!</div>
@@ -80,8 +80,8 @@ const  Example  = () => {
 ```
  ## Changelog
  v2.1.0
- * Using event listeners instead of timeouts to refresh the data on the usePersistedState hook
  * Changed the option autoRefresh to listen
+ * Using event listeners to refresh data on the usePersistedState hook
 
  v2.0.9
  * Allow persisted state read-only values with no defaults

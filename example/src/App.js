@@ -23,7 +23,7 @@ const App = () => {
         <Flex
           alignItems="left"
           isSection>
-          <h1>Local State Hooks</h1>
+          <h1>@dannyman/use-store Hooks</h1>
           <p>These hooks will allow you to create global state variables to share or get accross your React application.</p>
           <h4>Features:</h4>
           <ul>
@@ -72,7 +72,7 @@ const App = () => {
               <li>Open a new tab <b><span onClick={() => window.open(window.location.href, '_blank')}>here</span></b>.</li>
               <li>On the new tab, add a different string value to the input.</li>
               <li>Both tabs state should persist on reload or redirect.</li>
-              <li>The values on each tab should be synced.</li>
+              <li>The values on each tab should be synced (use option: listen).</li>
             </ol>
             <input
               type="text"
