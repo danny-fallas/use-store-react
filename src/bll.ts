@@ -13,9 +13,13 @@ const isTheSameObject = (object1: object, object2: object) => JSON.stringify(Obj
 
 const isTheSameArray = (arr1: Array<any>, arr2: Array<any>) => (arr1 && arr2) && (arr1.length === arr2.length) && arr1.every(value1 => arr2.some((value2) => isTheSameObject(value1, value2)));
 
-// const mbSize = (str: string) => (new Blob([str]).size) / 1048576;
 
 /** CONSTANTS */
+
+const CHUNK_KEY_SUFFIX = '__chunk_';
+const CHUNK_COUNT_SUFFIX = '__chunk_count';
+const MAX_CHUNK_MB = 4;
+const CHUNK_SIZE_BYTES = Math.floor(MAX_CHUNK_MB * 1048576 * 0.9);
 
 const ssrStateMock = (defaultValue: any = undefined) => [defaultValue, () => false];
 
@@ -27,20 +31,64 @@ const validations = {
     isTheSameArray,
 };
 
+/** PRIVATE HELPERS */
+
+const removeChunks = (storage: Storage, key: string) => {
+    const countRaw = storage.getItem(`${key}${CHUNK_COUNT_SUFFIX}`);
+    if (countRaw !== null) {
+        const count = parseInt(countRaw, 10);
+        if (isNaN(count)) return;
+        for (let i = 0; i < count; i++) {
+            storage.removeItem(`${key}${CHUNK_KEY_SUFFIX}${i}`);
+        }
+        storage.removeItem(`${key}${CHUNK_COUNT_SUFFIX}`);
+    }
+};
+
 /** PUBLIC FUNCTIONS */
 
 const set = (storage: Storage, key: string, value: any) => {
-    value = JSON.stringify(value);
-    value = encodeURI(value);
-    value = btoa(value);
+    let encoded: string = JSON.stringify(value);
+    encoded = encodeURI(encoded);
+    encoded = btoa(encoded);
 
-    // TO DO: Checkout the max memory limits on storage and handle
+    removeChunks(storage, key);
 
-    storage.setItem(key, value);
+    if (encoded.length > MAX_CHUNK_MB * 1048576) {
+        const chunks: string[] = [];
+        for (let i = 0; i < encoded.length; i += CHUNK_SIZE_BYTES) {
+            chunks.push(encoded.slice(i, i + CHUNK_SIZE_BYTES));
+        }
+        chunks.forEach((chunk, index) => {
+            storage.setItem(`${key}${CHUNK_KEY_SUFFIX}${index}`, chunk);
+        });
+        storage.setItem(`${key}${CHUNK_COUNT_SUFFIX}`, String(chunks.length));
+        storage.removeItem(key);
+    } else {
+        storage.setItem(key, encoded);
+    }
 }
 
 const get = (storage: Storage, key: string) => {
-    const raw = storage.getItem(key);
+    const countRaw = storage.getItem(`${key}${CHUNK_COUNT_SUFFIX}`);
+
+    let raw: string | null;
+    if (countRaw !== null) {
+        const count = parseInt(countRaw, 10);
+        if (isNaN(count)) return undefined;
+        let assembled = '';
+        for (let i = 0; i < count; i++) {
+            const chunk = storage.getItem(`${key}${CHUNK_KEY_SUFFIX}${i}`);
+            if (chunk === null) {
+                console.warn(`[@dannyman/use-store] Missing chunk ${i} for key "${key}". Data is corrupted and cannot be retrieved.`);
+                return undefined;
+            }
+            assembled += chunk;
+        }
+        raw = assembled;
+    } else {
+        raw = storage.getItem(key);
+    }
 
     if (raw && raw.length) {
         let value = raw;
