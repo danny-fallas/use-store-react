@@ -1,25 +1,30 @@
 {
   "name": "@dannyman/use-store",
-  "version": "2.1.0",
-  "description": "Custom React Hook that enables a global Store.",
+  "version": "3.0.0",
+  "description": "Minimal React hooks for state persisted in localStorage or sessionStorage.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "jsnext:main": "dist/index.es.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "prebuild": "rm -rf dist/",
     "build": "rollup -c && tsc -d --emitDeclarationOnly --noEmit false --declarationDir dist",
     "dev": "nodemon",
-    "example": "npm run build && npm start --prefix=./example/"
+    "example": "npm run build && npm run dev --prefix=./example/",
+    "test": "npm run build && npm test --prefix=./example/"
   },
   "repository": "danny-fallas/use-store-react",
   "keywords": [
     "react",
     "localstorage",
     "sessionstorage",
-    "redux",
-    "useState",
-    "hook"
+    "persisted-state",
+    "hooks",
+    "useState"
   ],
   "author": "Danny Fallas",
   "license": "MIT",
@@ -28,20 +33,17 @@
   },
   "homepage": "https://github.com/danny-fallas/use-store-react#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^23.0.2",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-typescript": "^9.0.2",
-    "@rollup/plugin-url": "^8.0.1",
-    "@types/node": "^18.11.9",
-    "@types/react": "^18.0.24",
-    "nodemon": "^2.0.20",
-    "rollup": "^3.2.5",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "tslib": "^2.4.1",
-    "typescript": "^4.8.4"
+    "@rollup/plugin-typescript": "^12.3.1",
+    "@types/react": "^19.3.0",
+    "nodemon": "3.1.11",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rollup": "^4.68.3",
+    "tslib": "^2.9.1",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   }
 }

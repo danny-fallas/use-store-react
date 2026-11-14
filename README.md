@@ -1,113 +1,126 @@
-
 # @dannyman/use-store
 
-  
+Two small React hooks for sharing JSON-compatible state in a page and persisting it in browser storage.
 
-  
-
-> Custom React Hook to enable using useState across the whole React Application
-
-  
-
-  
-
-[![NPM](https://img.shields.io/npm/v/@dannyman/use-store.svg)](https://www.npmjs.com/package/@dannyman/use-store) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-
- ## Overview
- 
-**usePersistedState** and **useSessionState** hooks will allow you to create global state variables to share or get across your React application.
-
-## How it works
-**usePersistedState:**  will allow you to store data and access it anywhere on your React app, even with the app open on different tabs or windows (on the same browser). The data will persist even if the app gets closed (unless the localstorage is cleared, in this case the data will get destroyed).
-
-**useSessionState:** works as the usePersistedState hook, but encapsules the data so it can be used only on a single client session (read [this](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) to understand when a new session is created) and it gets destroyed as soon as the user leaves the session.
-  
-## Features
-
-* Works exactly as the **useState** React Hook.
-* Supports all the JavaScript data types and data structures.
-* Persists the data depending on your needs.
-* The hooks will update the browser storage on the background.
-* Data will be available for all the React components and apps.
-* All the data is base64 encoded.
-* No need to use redux.
-* Easy to use.
-  
+[![NPM](https://img.shields.io/npm/v/@dannyman/use-store.svg)](https://www.npmjs.com/package/@dannyman/use-store)
 
 ## Install
 
-
 ```bash
-npm install --save @dannyman/use-store
+npm install @dannyman/use-store
 ```
 
-_Use the latest version for better support. Or upgrade to @1.1.3 if you are still using v1_
+Requires React 18 or later. The hooks use React's `useSyncExternalStore` API to
+bridge browser storage into React, and are tested with React 18.3.1 and React
+19.3.1.
+
+For state that does not need browser persistence or external synchronization,
+prefer React's built-in `useState` or `useReducer`.
 
 ## Usage
 
-The *usePersistedState* and *useSessionState* hooks will receive the following parameters:
-
-  
-
-* **key**: unique key name used to access the state. **required**
-* **defaultValue**: sets the state value to this value. **default = false**
-* **options**: object with the following options:
-    * **isNew**: overrides any value previously stored on component mount. **default = false**
-    * **listen** (\*): listens to any changes that happen on the background and updates the current state. Works for usePersistedState only. **default = false**
-    * **debug**: shows information about the state status. **default = false**
-    * **isSSR** (\*): the instantiation of the state will use the default value provided to match server output (if you are using the state to render inside a view), and then if it's not new it will update with the stored value. **default = false**
-
-
-
-_\* EXPERIMENTAL FEATURE, you could experience some issues._
-
-## Example
-  
 ```jsx
-import React from  'react';
-import { usePersistedState, useSessionState } from  '@dannyman/use-store';
+import { usePersistedState, useSessionState } from '@dannyman/use-store';
 
-const  Example  = () => {
-    const [name, setName] =  useSessionState('app:key:name','Danny', { isNew: true });
-    const [message] =  usePersistedState('app:key:message', 'nice to meet you', { listen: true });
+function Preferences() {
+  const [theme, setTheme] = usePersistedState('app:theme', 'system');
+  const [draft, setDraft] = useSessionState('app:draft', '');
 
-    return (
-        <div>Hello {name},  {message}!</div>
-        <input type="text" onChange={(e) => setName(e.target.value)} />
-    );
-};
+  return (
+    <>
+      <select value={theme} onChange={event => setTheme(event.target.value)}>
+        <option value="system">System</option>
+        <option value="dark">Dark</option>
+      </select>
+      <input value={draft} onChange={event => setDraft(event.target.value)} />
+    </>
+  );
+}
 ```
- ## Changelog
- v2.1.0
- * Changed the option autoRefresh to listen
- * Using event listeners to refresh data on the usePersistedState hook
 
- v2.0.9
- * Allow persisted state read-only values with no defaults
- * Fixed TS issue on useSessionState hook
+Both hooks return `[value, setValue]`, and setters accept values or functional updates:
 
- v2.0.6
- * Added support for SSR frameworks (isSSR option)
+```js
+const [count, setCount] = usePersistedState('app:count', 0);
+setCount(current => current + 1);
+```
 
- v2.0.4
- * Updated to support React 18
- * Migrated to Typescript
- * Removed unnecessary dependencies and files
- * Allow null defaultValues
+## Storage behavior
 
- v1.1.3
- * Using provided defaultValue during server-side rendering.
- * Adding "debug" option for logging.
- * Validating non-function defaultValue.
- * Fixing server-side rendering framework issue.
- * Reverting hook signature for defaultValue.
- * Enabling background change listening.
- * Implementing options object for future functionality.
+- Hooks using the same storage type and key share updates within the same page.
+- `usePersistedState` uses `localStorage`, so updates made through this hook are also observed in other same-origin tabs.
+- `useSessionState` uses `sessionStorage`, which is scoped to a tab's page session. A tab opened with an opener may start with a copy of the opener's session storage; later changes are not shared across tabs.
+- Existing stored values take precedence over the initial value. The initial value is used when the key is absent.
+- During server rendering, the hook uses the initial value. After hydration, it reads browser storage and updates if a stored value exists.
+- Values use JSON serialization. Existing v2 Base64-wrapped JSON values remain readable and are rewritten as plain JSON on the next successful update.
 
+## Limits and errors
+
+This package is intended for small, non-sensitive values such as preferences and drafts—not files, large datasets, or server state.
+
+- Web Storage is synchronous, has browser-dependent quotas scoped to the origin, and is best-effort: users or browsers can clear or evict stored data.
+- If serialization or a storage read/write fails (including quota exhaustion), the hook throws an error. A failed write does not update the in-page value. The package does not split data into multiple keys or fall back to another storage backend.
+- Values should follow JSON semantics. Functions, `undefined`, cyclic structures, `BigInt`, and other non-JSON values cannot be persisted reliably.
+- Base64 is not encryption. Browser storage is accessible to same-origin JavaScript; do not store secrets or sensitive data.
+- For large or asynchronous data, use IndexedDB or another storage solution designed for it.
+
+## Migrating from v2
+
+The v3 API removes the experimental options object. Cross-tab and same-page updates are automatic:
+
+```diff
+- usePersistedState('app:theme', 'system', { listen: true, debug: true })
++ usePersistedState('app:theme', 'system')
+```
+
+`isSSR` is no longer needed. If a component used `isNew` to reset a key, call the returned setter with the desired value when that reset should occur. Existing v2 values are migrated the next time a successful update writes that key.
+
+## Development
+
+```bash
+npm ci
+npm ci --prefix example
+npm test
+npm run example
+```
+
+## Changelog
+
+### 3.0.0
+
+- React 18+ external-store integration with automatic same-page and cross-tab synchronization.
+- Validated against React 18.3.1 and the latest stable React 19.3.1.
+- Removed the options object and Base64 writes; added v2 storage migration.
+- Clarified JSON, SSR, storage quota, and error behavior.
+- Refreshed the Rollup toolchain and replaced the example's Create React App runner with Vite and Vitest.
+
+### 2.1.0
+
+- Changed `autoRefresh` to `listen`.
+- Added storage event listening for persisted state.
+
+### 2.0.9
+
+- Allowed persisted read-only values with no default.
+- Fixed a TypeScript issue in `useSessionState`.
+
+### 2.0.6
+
+- Added the experimental `isSSR` option.
+
+### 2.0.4
+
+- Added React 18 support and migrated to TypeScript.
+- Removed unnecessary dependencies and files.
+- Allowed `null` default values.
+
+### 1.1.3
+
+- Improved server-rendered defaults and background change listening.
+- Added debug logging and the options object.
 
 ## License
 
 MIT © [danny-fallas](https://github.com/danny-fallas)
 
----
+Built by [Pacific EcoSolutions](https://pacificecosolutions.ai).
