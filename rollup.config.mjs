@@ -1,10 +1,7 @@
 import typescript from '@rollup/plugin-typescript'
-import commonjs from '@rollup/plugin-commonjs'
-import resolve from '@rollup/plugin-node-resolve'
-import external from 'rollup-plugin-peer-deps-external'
-import url from '@rollup/plugin-url'
+import { readFileSync } from 'node:fs'
 
-import pkg from './package.json' assert {type: 'json'};
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
 
 export default {
     external: ['react', 'react-dom'],
@@ -23,11 +20,5 @@ export default {
             sourcemap: true
         }
     ],
-    plugins: [
-        external(),
-        url({ exclude: ['**/*.svg'] }),
-        resolve(),
-        typescript(),
-        commonjs({ extensions: ['.js', '.ts'] })
-    ]
+    plugins: [typescript()]
 };

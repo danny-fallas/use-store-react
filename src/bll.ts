@@ -1,107 +1,205 @@
-/** TYPES */
-type IOptionsAvailable = {
-    listen?: boolean,
-    debug?: boolean,
-    isNew?: boolean,
-    isSSR?: boolean,
-};
+import type { SetStateAction } from 'react'
 
-/** PRIVATE FUNCTIONS */
-const isSameType = (value1: any, value2: any) => typeof value1 === typeof value2;
+export type StorageArea = 'local' | 'session'
 
-const isTheSameObject = (object1: object, object2: object) => JSON.stringify(Object.values(object1).sort()) === JSON.stringify(Object.values(object2).sort());
-
-const isTheSameArray = (arr1: Array<any>, arr2: Array<any>) => (arr1 && arr2) && (arr1.length === arr2.length) && arr1.every(value1 => arr2.some((value2) => isTheSameObject(value1, value2)));
-
-// const mbSize = (str: string) => (new Blob([str]).size) / 1048576;
-
-/** CONSTANTS */
-
-const ssrStateMock = (defaultValue: any = undefined) => [defaultValue, () => false];
-
-const isBrowser = (typeof window !== 'undefined');
-
-const validations = {
-    isSameType,
-    isTheSameObject,
-    isTheSameArray,
-};
-
-/** PUBLIC FUNCTIONS */
-
-const set = (storage: Storage, key: string, value: any) => {
-    value = JSON.stringify(value);
-    value = encodeURI(value);
-    value = btoa(value);
-
-    // TO DO: Checkout the max memory limits on storage and handle
-
-    storage.setItem(key, value);
+type StoreEntry = {
+  defaultValue: unknown
+  key: string
+  listeners: Set<() => void>
+  onStorage: (event: StorageEvent) => void
+  raw: string | null
+  snapshot: unknown
+  storage: Storage
 }
 
-const get = (storage: Storage, key: string) => {
-    const raw = storage.getItem(key);
+const stores: Record<StorageArea, Map<string, StoreEntry>> = {
+  local: new Map(),
+  session: new Map()
+}
 
-    if (raw && raw.length) {
-        let value = raw;
-        value = atob(value);
-        value = decodeURI(value);
-        if (value && value !== 'undefined') value = JSON.parse(value);
+const errorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error)
 
-        return value;
-    } else {
-        return undefined;
+const storageError = (operation: string, key: string, error: unknown) => {
+  const result = new Error(
+    `use-store: failed to ${operation} storage for key "${key}": ${errorMessage(error)}`
+  )
+  result.name = 'StorageError'
+  return result
+}
+
+const getStorage = (area: StorageArea, key: string) => {
+  try {
+    if (typeof window === 'undefined') {
+      throw new Error('Browser storage is not available')
     }
-};
 
-const refresh = (callback: Function) => setInterval(callback, 500);
+    return area === 'local' ? window.localStorage : window.sessionStorage
+  } catch (error) {
+    throw storageError('access', key, error)
+  }
+}
 
-const getValidOptions = (options?: IOptionsAvailable) => ({
-    listen: options?.listen || false,
-    debug: options?.debug || false,
-    isNew: options?.isNew || false,
-    isSSR: options?.isSSR || false,
-});
+const readRawValue = (storage: Storage, key: string) => {
+  try {
+    return storage.getItem(key)
+  } catch (error) {
+    throw storageError('read', key, error)
+  }
+}
 
-const stateShouldUpdate = (state: any, newState: any) => {
-    switch (true) {
-        case !isSameType(state, newState):
-        case (newState instanceof Object && newState !== undefined && !isTheSameObject(state, newState)):
-        case (newState instanceof Array && !isTheSameArray(state, newState)):
-        case ((newState instanceof String || newState instanceof Number) && state !== newState):
-            return true;
-        default:
-            return false;
+const serialize = (key: string, value: unknown) => {
+  try {
+    const raw = JSON.stringify(value)
+
+    if (raw === undefined) {
+      throw new TypeError('Only JSON-serializable values can be persisted')
     }
-};
 
-const writeToLog = (debug: boolean, key: string) => {
-    if (debug) {
-        return (message: string, object = () => { }, err = false) => {
-            console.group(`[@dannyman/use-store]@%c${key}`, 'color: blue;');
+    return raw
+  } catch (error) {
+    throw storageError('serialize', key, error)
+  }
+}
 
-            if (message) console.log(`${err ? '%cERROR: ' : '%c'}${message}`, `color: ${err ? 'red' : 'green'};`);
-            if (!(object instanceof Function)) console.log(`${typeof object} =>`, JSON.parse(JSON.stringify(object)));
-
-            console.groupEnd();
-        }
-    } else {
-        return () => { };
+const parse = (key: string, raw: string) => {
+  try {
+    return JSON.parse(raw) as unknown
+  } catch {
+    try {
+      return JSON.parse(decodeURI(atob(raw))) as unknown
+    } catch (error) {
+      throw storageError('read', key, error)
     }
-};
+  }
+}
 
-const ssrMock = (defaultValue: any) => (!isBrowser ? ssrStateMock(defaultValue) : false);
+const notify = (entry: StoreEntry) => {
+  Array.from(entry.listeners).forEach(listener => listener())
+}
 
-export {
-    IOptionsAvailable,
-    isBrowser,
-    validations,
-    set,
-    get,
-    refresh,
-    ssrMock,
-    writeToLog,
-    ssrStateMock,
-    getValidOptions,
-    stateShouldUpdate,
-};
+const updateFromStorage = (entry: StoreEntry, raw: string | null) => {
+  if (raw === entry.raw) return
+
+  const snapshot = raw === null ? entry.defaultValue : parse(entry.key, raw)
+  entry.raw = raw
+  entry.snapshot = snapshot
+  notify(entry)
+}
+
+const createEntry = (
+  area: StorageArea,
+  key: string,
+  defaultValue: unknown
+): StoreEntry => {
+  const storage = getStorage(area, key)
+  const raw = readRawValue(storage, key)
+
+  const entry: StoreEntry = {
+    defaultValue,
+    key,
+    listeners: new Set(),
+    onStorage: () => {},
+    raw,
+    snapshot: raw === null ? defaultValue : parse(key, raw),
+    storage
+  }
+
+  entry.onStorage = event => {
+    if (
+      event.storageArea !== storage ||
+      (event.key !== key && event.key !== null)
+    ) {
+      return
+    }
+
+    updateFromStorage(entry, readRawValue(storage, key))
+  }
+
+  return entry
+}
+
+const getEntry = (
+  area: StorageArea,
+  key: string,
+  defaultValue: unknown
+) => {
+  const areaStores = stores[area]
+  const existing = areaStores.get(key)
+  if (existing) return existing
+
+  const entry = createEntry(area, key, defaultValue)
+  areaStores.set(key, entry)
+  return entry
+}
+
+export const getStoreSnapshot = <T,>(
+  area: StorageArea,
+  key: string,
+  defaultValue: T
+): T => {
+  if (typeof window === 'undefined') return defaultValue
+  const entry = getEntry(area, key, defaultValue)
+  if (entry.listeners.size === 0) {
+    updateFromStorage(entry, readRawValue(entry.storage, key))
+  }
+  return entry.snapshot as T
+}
+
+export const subscribeToStore = (
+  area: StorageArea,
+  key: string,
+  defaultValue: unknown,
+  listener: () => void
+) => {
+  if (typeof window === 'undefined') return () => {}
+
+  const entry = getEntry(area, key, defaultValue)
+  const isFirstListener = entry.listeners.size === 0
+  if (isFirstListener) {
+    window.addEventListener('storage', entry.onStorage)
+  }
+  entry.listeners.add(listener)
+  if (isFirstListener) {
+    try {
+      updateFromStorage(entry, readRawValue(entry.storage, key))
+    } catch (error) {
+      entry.listeners.delete(listener)
+      window.removeEventListener('storage', entry.onStorage)
+      throw error
+    }
+  }
+
+  return () => {
+    entry.listeners.delete(listener)
+    if (entry.listeners.size === 0) {
+      window.removeEventListener('storage', entry.onStorage)
+    }
+  }
+}
+
+export const setStoreValue = <T,>(
+  area: StorageArea,
+  key: string,
+  defaultValue: T,
+  action: SetStateAction<T>
+) => {
+  const entry = getEntry(area, key, defaultValue)
+  const previous = entry.snapshot as T
+  const next = typeof action === 'function'
+    ? (action as (value: T) => T)(previous)
+    : action
+  const raw = serialize(key, next)
+
+  if (Object.is(next, previous) && entry.raw === raw) return
+
+  try {
+    entry.storage.setItem(key, raw)
+  } catch (error) {
+    throw storageError('write', key, error)
+  }
+
+  entry.raw = raw
+  entry.snapshot = next
+  notify(entry)
+}
