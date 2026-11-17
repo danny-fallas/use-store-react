@@ -69,6 +69,44 @@ test('supports StrictMode mount, updates, cleanup, and remount', () => {
   expect(screen.getByTestId('value')).toHaveTextContent('1')
 })
 
+test('keeps object defaults stable across subscription changes in StrictMode', async () => {
+  const key = makeKey('strict-mode-object-default')
+
+  const Value = () => {
+    const [value, setValue] = usePersistedState(key, { count: 0 })
+    return (
+      <>
+        <span data-testid="value">{value.count}</span>
+        <button onClick={() => setValue(current => ({ count: current.count + 1 }))}>
+          increment
+        </button>
+      </>
+    )
+  }
+
+  const view = render(
+    <React.StrictMode>
+      <Value />
+    </React.StrictMode>
+  )
+
+  fireEvent.click(screen.getByText('increment'))
+  expect(screen.getByTestId('value')).toHaveTextContent('1')
+  expect(localStorage.getItem(key)).toBe(JSON.stringify({ count: 1 }))
+
+  await act(async () => {
+    view.unmount()
+    await Promise.resolve()
+  })
+
+  render(
+    <React.StrictMode>
+      <Value />
+    </React.StrictMode>
+  )
+  expect(screen.getByTestId('value')).toHaveTextContent('1')
+})
+
 test('keeps local and session values separate for the same key', () => {
   const key = makeKey('areas')
   localStorage.setItem(key, JSON.stringify('local'))

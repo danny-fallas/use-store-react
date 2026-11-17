@@ -17,6 +17,17 @@ const stores: Record<StorageArea, Map<string, StoreEntry>> = {
   session: new Map()
 }
 
+const scheduleEntryCleanup = (area: StorageArea, entry: StoreEntry) => {
+  queueMicrotask(() => {
+    if (
+      entry.listeners.size === 0 &&
+      stores[area].get(entry.key) === entry
+    ) {
+      stores[area].delete(entry.key)
+    }
+  })
+}
+
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error)
 
@@ -166,6 +177,7 @@ export const subscribeToStore = (
     } catch (error) {
       entry.listeners.delete(listener)
       window.removeEventListener('storage', entry.onStorage)
+      scheduleEntryCleanup(area, entry)
       throw error
     }
   }
@@ -174,6 +186,7 @@ export const subscribeToStore = (
     entry.listeners.delete(listener)
     if (entry.listeners.size === 0) {
       window.removeEventListener('storage', entry.onStorage)
+      scheduleEntryCleanup(area, entry)
     }
   }
 }
@@ -185,6 +198,7 @@ export const setStoreValue = <T,>(
   action: SetStateAction<T>
 ) => {
   const entry = getEntry(area, key, defaultValue)
+  if (entry.listeners.size === 0) scheduleEntryCleanup(area, entry)
   const previous = entry.snapshot as T
   const next = typeof action === 'function'
     ? (action as (value: T) => T)(previous)
@@ -202,4 +216,5 @@ export const setStoreValue = <T,>(
   entry.raw = raw
   entry.snapshot = next
   notify(entry)
+  if (entry.listeners.size === 0) scheduleEntryCleanup(area, entry)
 }
