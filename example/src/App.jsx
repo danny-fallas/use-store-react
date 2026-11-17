@@ -15,7 +15,7 @@ const App = () => {
     setAnotherSessionState(100); // Another Session State, that only allows writing to the storage
   };
 
-  console.info('Another Persisted State, with read-only options:', anotherPersistedState);
+  console.info('Another Persisted State (read only in this component):', anotherPersistedState);
 
   return (
     <React.Fragment>

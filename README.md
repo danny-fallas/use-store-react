@@ -38,7 +38,7 @@ function Preferences() {
 }
 ```
 
-Both hooks return `[value, setValue]`, and setters accept values or functional updates. The initial value is optional; without one, the value is `undefined` until the key is written:
+Both hooks return `[value, setValue]`, and setters accept values or functional updates. The initial value is optional; if omitted, the current value is `undefined` when no value is stored. An existing stored value still takes precedence:
 
 ```js
 const [count, setCount] = usePersistedState('app:count', 0);
