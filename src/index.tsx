@@ -1,92 +1,55 @@
-// Imports
+import { useCallback, useSyncExternalStore } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import {
-  useState,
-  useEffect,
-  useCallback
-} from 'react';
-import {
-  set,
-  get,
-  ssrMock,
-  writeToLog,
-  getValidOptions,
-  IOptionsAvailable,
-} from './bll';
+  getStoreSnapshot,
+  setStoreValue,
+  subscribeToStore,
+  type StorageArea
+} from './bll'
 
-// Private functions
-const handleState = (storage: Storage, key: string, defaultValue?: any, options?: IOptionsAvailable) => {
-  const {
-    listen,
-    isNew,
-    debug,
-    isSSR,
-  } = getValidOptions(options);
+type StorageHook = {
+  <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>]
+  <T = unknown>(
+    key: string
+  ): [T | undefined, Dispatch<SetStateAction<T | undefined>>]
+}
 
-  const log = useCallback(writeToLog(debug, key), [debug, key]);
-  const getInitialValue = (onFirstRender: boolean = false) => {
-    let _defaultValue = defaultValue;
+const createStorageHook = (area: StorageArea): StorageHook => {
+  function useStorageState<T>(
+    key: string,
+    initialValue: T
+  ): [T, Dispatch<SetStateAction<T>>]
+  function useStorageState<T = unknown>(
+    key: string
+  ): [T | undefined, Dispatch<SetStateAction<T | undefined>>]
+  function useStorageState<T = unknown>(
+    key: string,
+    initialValue?: T
+  ): [T | undefined, Dispatch<SetStateAction<T | undefined>>] {
+    const subscribe = useCallback(
+      (listener: () => void) =>
+        subscribeToStore(area, key, initialValue, listener),
+      [area, key, initialValue]
+    )
+    const getSnapshot = useCallback(
+      () => getStoreSnapshot(area, key, initialValue),
+      [area, key, initialValue]
+    )
+    const getServerSnapshot = useCallback(() => initialValue, [initialValue])
+    const value = useSyncExternalStore(
+      subscribe,
+      getSnapshot,
+      getServerSnapshot
+    )
+    const setValue = useCallback<Dispatch<SetStateAction<T | undefined>>>(
+      action => setStoreValue(area, key, initialValue, action),
+      [area, key, initialValue]
+    )
 
-    if (_defaultValue instanceof Function) {
-      log('The defaultValue cannot be a function.', defaultValue, true);
-      _defaultValue = undefined;
-    }
+    return [value, setValue]
+  }
+  return useStorageState
+}
 
-    if (isNew || (isSSR && !onFirstRender)) {
-      _defaultValue = defaultValue
-    } else {
-      const existentValue = get(storage, key);
-      _defaultValue = (existentValue !== undefined && existentValue !== 'undefined') ? existentValue : defaultValue;
-    }
-
-    log('Default Value:', _defaultValue);
-    return _defaultValue;
-  };
-
-  const [isFirstRender, setIsFirstRender] = useState(true);
-  const [state, setState] = useState<any>(getInitialValue);
-
-  const onStorageEvent = (event: StorageEvent) => {
-    if (event.isTrusted && event.oldValue !== event.newValue) {
-      const newState = get(storage, key);
-      log('Listener: updating the state value.');
-      setState(newState);
-    }
-  };
-
-  useEffect(() => {
-    setIsFirstRender(false);
-
-    if (isFirstRender && !isNew && isSSR) {
-      log('SSR: updating the default value.');
-      setState(getInitialValue(true));
-    }
-
-    if (listen) {
-      log('Listener: attaching a listener.');
-      window.onstorage = onStorageEvent;
-      return () => {
-        log('Listener: removing a listener.');
-        window.onstorage = null;
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isFirstRender) {
-      log('Updated value:', state);
-      set(storage, key, state);
-    }
-  }, [key, state]);
-
-  return [state, setState];
-};
-
-// Public functions
-const usePersistedState = (key: string, defaultValue?: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(localStorage, key, defaultValue, options);
-const useSessionState = (key: string, defaultValue?: any, options?: IOptionsAvailable) => ssrMock(defaultValue) || handleState(sessionStorage, key, defaultValue, options);
-
-// Exports
-export {
-  usePersistedState,
-  useSessionState
-};
+export const usePersistedState = createStorageHook('local')
+export const useSessionState = createStorageHook('session')
